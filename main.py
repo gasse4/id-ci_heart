@@ -8,10 +8,14 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 
 
-df = pd.read_csv("heart.csv")
+# df = pd.read_csv("heart.csv")
+df = pd.read_csv("WineQT.csv", sep=",")
 
-X = df.drop("target", axis=1)
-y = df["target"]
+# X = df.drop("target", axis=1)
+# y = df["target"]
+X = df.drop("quality", axis=1)
+df = df.drop("Id", axis=1)
+y = (df["quality"] > 5).astype(int)
 
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.15, random_state=42
@@ -57,10 +61,10 @@ model = ANN()
 
 # loss + optimizer
 criterion = nn.BCELoss()
-optimizer = optim.Adam(model.parameters(), lr=0.01)
+optimizer = optim.Adam(model.parameters(), lr=0.01 )
 
 # training
-for epoch in range(100):
+for epoch in range(200):
     optimizer.zero_grad()
     outputs = model(X_train_t)
     loss = criterion(outputs, y_train_t)
@@ -70,7 +74,7 @@ for epoch in range(100):
 # evaluation
 with torch.no_grad():
     preds = model(X_test_t)
-    preds = (preds > 0.5).float()
+    preds = (preds > 0.6).float()
     accuracy = (preds.eq(y_test_t).sum() / len(y_test_t)).item()
 
 print("Accuracy:", accuracy)
